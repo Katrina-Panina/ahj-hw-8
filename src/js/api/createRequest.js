@@ -1,5 +1,5 @@
 const createRequest = async (options) => {
-  const baseURL = "https://astro-messenger.herokuapp.com";
+  const baseURL = 'https://astro-messenger.herokuapp.com';
   const requestURL = `${baseURL}${options.query}`;
   const request = await fetch(requestURL, {
     method: options.method,
