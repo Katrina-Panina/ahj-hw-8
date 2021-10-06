@@ -1,7 +1,7 @@
-import templateEngine from "./TemplateEngine";
-import ModalWithForm from "./ModalWithForm";
-import eventBus from "./EventBus";
-import ChatAPI from "./api/ChatAPI";
+import templateEngine from './TemplateEngine';
+import ModalWithForm from './ModalWithForm';
+import eventBus from './EventBus';
+import ChatAPI from './api/ChatAPI';
 
 export default class Chat {
   constructor(container) {
@@ -20,96 +20,97 @@ export default class Chat {
 
   bindToDOM() {
     const template = templateEngine.generate({
-      type: "div",
+      type: 'div',
       attr: {
-        class: ["container"],
+        class: ['container'],
       },
       content: [
         {
-          type: "div",
+          type: 'div',
           attr: {
-            class: ["chat__header"],
+            class: ['chat__header'],
           },
           content: {
-            type: "h1",
+            type: 'h1',
             attr: {
-              class: ["chat__title"],
+              class: ['chat__title'],
             },
-            content: "AstroMessenger",
+            content: 'AstroMessenger',
           },
         },
         {
-          type: "div",
+          type: 'div',
           attr: {
-            class: ["chat__connect"],
+            class: ['chat__connect'],
           },
-          content: "Chat connect",
+          content: 'Chat connect',
         },
         {
-          type: "div",
+          type: 'div',
           attr: {
-            class: ["chat__container"],
+            class: ['chat__container'],
           },
           content: [
             {
-              type: "div",
+              type: 'div',
               attr: {
-                class: ["chat__area"],
+                class: ['chat__area'],
               },
               content: [
                 {
-                  type: "div",
+                  type: 'div',
                   attr: {
-                    class: ["chat__messages-container"],
+                    class: ['chat__messages-container'],
                   },
-                  content: "",
+                  content: '',
                 },
 
                 {
-                  type: "div",
+                  type: 'div',
                   attr: {
-                    class: ["chat__messages-input"],
+                    class: ['chat__messages-input'],
                   },
                   content: {
-                    type: "div",
+                    type: 'div',
                     attr: {
-                      class: ["form__group"],
+                      class: ['form__group'],
                     },
                     content: {
-                      type: "input",
+                      type: 'input',
                       attr: {
-                        class: ["form__input"],
-                        type: "text",
-                        id: "message-field",
-                        name: "message",
-                        placeholder: "Please enter your message...",
+                        class: ['form__input'],
+                        type: 'text',
+                        id: 'message-field',
+                        name: 'message',
+                        placeholder: 'Please enter your message...',
                         disabled: true,
                       },
-                      content: "",
+                      content: '',
                     },
                   },
                 },
-                ],
-              type: "div",
+              ],
+            ],
+              type: 'div',
               attr: {
-                class: ["chat__userlist  "],
+                class: ['chat__userlist'],
               },
-              content: "",
+              content: '',
             },
           ],
         },
       ],
     });
     this.container.appendChild(template);
-    this.userListContainer = this.container.querySelector(".chat__userlist");
-    this.inputElement = this.container.querySelector(".form__input");
-    this.connectButton = this.container.querySelector(".chat__connect");
-    this.messageContainer = this.container.querySelector(".chat__messages-container");
+    this.userListContainer = this.container.querySelector('.chat__userlist');
+    this.inputElement = this.container.querySelector('.form__input');
+    this.connectButton = this.container.querySelector('.chat__connect');
+    this.messageContainer = this.container.querySelector('.chat__messages-container');
   }
 
   registerEvents() {
-    this.connectButton.addEventListener("click", () => this.modalWithForm.showModal());
-    this.inputElement.addEventListener("keydown", (event) => {
+    this.connectButton.addEventListener('click', () => this.modalWithForm.showModal());
+    this.inputElement.addEventListener('keydown', (event) => {
       if (event.keyCode === 13) {
         this.sendMessage();
       }
@@ -117,23 +118,23 @@ export default class Chat {
   }
 
   subscribeOnEvents() {
-    eventBus.subscribe("connect-chat", this.onEnterChatHandler, this);
+    eventBus.subscribe('connect-chat', this.onEnterChatHandler, this);
   }
 
   async onEnterChatHandler(newUser) {
     const response = await this.api.create(newUser);
-    if (response.status === "ok") {
+    if (response.status === 'ok') {
       this.modalWithForm.hideHint();
       this.modalWithForm.close();
-      this.connectButton.classList.add("hidden");
+      this.connectButton.classList.add('hidden');
       this.user = response.user;
       this.inputElement.disabled = false;
-      this.websocket = new WebSocket("wss://astro-messenger.herokuapp.com/chat");
-      this.websocket.addEventListener("message", (event) => this.renderMessage(event));
-      window.addEventListener("beforeunload", () =>
+      this.websocket = new WebSocket('wss://astro-messenger.herokuapp.com/chat');
+      this.websocket.addEventListener('message', (event) => this.renderMessage(event));
+      window.addEventListener('beforeunload', () =>
         this.websocket.send(
           JSON.stringify({
-            type: "exit",
+            type: 'exit',
             user: this.user,
           })
         )
@@ -145,22 +146,22 @@ export default class Chat {
 
   sendMessage() {
     const { value } = this.inputElement;
-    this.websocket.send(JSON.stringify({ type: "send", message: value, user: this.user }));
-    this.inputElement.value = "";
+    this.websocket.send(JSON.stringify({ type: 'send', message: value, user: this.user }));
+    this.inputElement.value = '';
   }
 
   renderMessage(event) {
     const receivedData = JSON.parse(event.data);
     if (Array.isArray(receivedData)) {
-      this.userListContainer.textContent = "";
+      this.userListContainer.textContent = '';
       receivedData.forEach((user) => {
         const template = templateEngine.generate({
-          type: "div",
+          type: 'div',
           attr: {
-            class: ["chat__user"],
-            "data-user-id": user.id,
+            class: ['chat__user'],
+            'data-user-id': user.id,
           },
-          content: user.name === this.user.name ? "You" : user.name,
+          content: user.name === this.user.name ? 'You' : user.name,
         });
         this.userListContainer.appendChild(template);
       });
@@ -171,31 +172,31 @@ export default class Chat {
       .toLocaleTimeString()
       .slice(0, 5)} ${sourceDate.toLocaleDateString()} `;
     const template = templateEngine.generate({
-      type: "div",
+      type: 'div',
       attr: {
         class: [
-          "message__container",
+          'message__container',
           `${
             receivedData.user.name === this.user.name
-              ? "message__container-yourself"
-              : "message__container-interlocutor"
+              ? 'message__container-yourself'
+              : 'message__container-interlocutor'
           }`,
         ],
       },
       content: [
         {
-          type: "div",
+          type: 'div',
           attr: {
-            class: ["message__header"],
+            class: ['message__header'],
           },
           content: `${
-            receivedData.user.name === this.user.name ? "You" : receivedData.user.name
+            receivedData.user.name === this.user.name ? 'You' : receivedData.user.name
           }, ${date}`,
         },
         {
-          type: "div",
+          type: 'div',
           attr: {
-            class: ["message__body"],
+            class: ['message__body'],
           },
           content: receivedData.message,
         },
