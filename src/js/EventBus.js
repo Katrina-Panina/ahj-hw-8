@@ -10,7 +10,7 @@ class EventBus {
    * @param {object} context
    */
   subscribe(event, handler, context) {
-    if (typeof context === "undefined") {
+    if (typeof context === 'undefined') {
       context = handler;
     }
     this.handlers.push({
