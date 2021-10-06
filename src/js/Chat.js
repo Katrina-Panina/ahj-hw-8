@@ -90,7 +90,8 @@ export default class Chat {
                   },
                 },
               ],
-            ],
+            },
+            {
               type: 'div',
               attr: {
                 class: ['chat__userlist'],
