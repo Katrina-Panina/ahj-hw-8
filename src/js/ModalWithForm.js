@@ -167,6 +167,6 @@ export default class ModalWithForm {
 
   clearForm() {
     const { formElement } = this;
-    formElement.elements.name.value = "";
+    formElement.elements.name.value = '';
   }
 }
